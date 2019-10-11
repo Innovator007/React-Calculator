@@ -1,23 +1,17 @@
 import React, {Component} from 'react';
+import { toggleScientific } from '../actions/index';
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import Button from './Button.js';
 
 class KeyPadComponent extends Component {
-    state = {
-        scientific: false
-    }
 
     handleClick = () => {
-        this.setState({ scientific: !this.state.scientific });
-    }
-
-    parseHTML = (html) => {
-        var t = document.createElement('template');
-        t.innerHTML = html;
-        return t.content.cloneNode(true);
+        this.props.toggleScientific(!this.props.scientific);
     }
 
     showScientificButtons = () => {
-        if(this.state.scientific) {
+        if(this.props.scientific) {
             return (
                 <div className="button-flex animation">
                     <Button name="**2" btnText="sqr" onClick={e => this.props.onClick(e.target.name)} />
@@ -35,7 +29,7 @@ class KeyPadComponent extends Component {
             <div className="keypad-container">
                 <div className="button-flex">
                     <Button classname="orange-btn" name="C" onClick={e => this.props.onClick(e.target.name)} />
-                    <Button name={this.state.scientific ? "CLOSE" : "SCI"} onClick={this.handleClick} />
+                    <Button name={this.props.scientific ? "CLOSE" : "SCI"} onClick={this.handleClick} />
                     <Button classname="orange-text" name="CE" onClick={e => this.props.onClick(e.target.name)} />
                 </div>
                 <div className="button-flex">
@@ -68,4 +62,19 @@ class KeyPadComponent extends Component {
     }
 }
 
-export default KeyPadComponent;
+function mapStateToProps (state) {
+  return { 
+    scientific: state.scientific.mode
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return bindActionCreators(
+    {
+      toggleScientific: toggleScientific
+    },
+    dispatch
+  );
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(KeyPadComponent);
